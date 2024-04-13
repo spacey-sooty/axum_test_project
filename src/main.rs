@@ -22,11 +22,23 @@ async fn indexcss() -> Response<String> {
         .unwrap();
 }
 
+#[axum::debug_handler]
+async fn indexjs() -> Response<String> {
+    let markup = include_str!("index.js").to_string();
+
+    return Response::builder()
+        .status(200)
+        .header("Content-Type", "text/javascript")
+        .body(markup)
+        .unwrap();
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
         .route("/", get(indexhtml))
-        .route("/index.css", get(indexcss));
+        .route("/index.css", get(indexcss))
+        .route("/index.js", get(indexjs));
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:8000")
         .await
