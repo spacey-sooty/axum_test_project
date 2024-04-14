@@ -1,8 +1,8 @@
-use axum::{response::{IntoResponse, Response}, routing::get, serve, Json, Router};
+use axum::{response::{IntoResponse, Response}, routing::{get, Route}, serve, Json, Router};
 
 #[axum::debug_handler]
 async fn indexhtml() -> Response<String> {
-    let markup = tokio::fs::read_to_string("index.html").await.unwrap();
+    let markup = include_str!("index.html").to_string();
 
     return Response::builder()
         .status(200)
@@ -13,7 +13,7 @@ async fn indexhtml() -> Response<String> {
 
 #[axum::debug_handler]
 async fn indexcss() -> Response<String> {
-    let markup = tokio::fs::read_to_string("index.css").await.unwrap();
+    let markup = include_str!("index.css").to_string();
 
     return Response::builder()
         .status(200)
@@ -24,7 +24,7 @@ async fn indexcss() -> Response<String> {
 
 #[axum::debug_handler]
 async fn indexjs() -> Response<String> {
-    let markup = tokio::fs::read_to_string("index.js").await.unwrap();
+    let markup = include_str!("index.js").to_string();
 
     return Response::builder()
         .status(200)
@@ -53,11 +53,11 @@ async fn cpuusage() -> impl IntoResponse {
 
 #[axum::debug_handler]
 async fn sysinfo() -> impl IntoResponse {
+    let mut sys = sysinfo::System::new();
+    sys.refresh_all();
+
     let mut data: Vec<String> = Vec::new();
     data.push(sysinfo::System::name().unwrap());
-    data.push(sysinfo::System::kernel_version().unwrap());
-    data.push(sysinfo::System::os_version().unwrap());
-    data.push(sysinfo::System::host_name().unwrap());
 
     return Json(data);
 }
