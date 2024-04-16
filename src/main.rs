@@ -68,8 +68,8 @@ async fn main() {
         .route("/", get(indexhtml))
         .route("/index.css", get(indexcss))
         .route("/index.js", get(indexjs))
-        .route("/api/get_cpu_usage", get(cpuusage))
-        .route("/api/sysinfo", get(sysinfo));
+        .route("/api/cpu_usage", get(cpuusage))
+        .route("/api/static_sysinfo", get(sysinfo));
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:8000").await.unwrap();
     serve(listener, app).await.unwrap();
