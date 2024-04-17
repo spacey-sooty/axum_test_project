@@ -52,6 +52,14 @@ async fn cpuusage() -> impl IntoResponse {
 }
 
 #[axum::debug_handler]
+async fn cores() -> impl IntoResponse {
+    let mut sys = sysinfo::System::new();
+    sys.refresh_cpu();
+
+    return Json(sys.physical_core_count());
+}
+
+#[axum::debug_handler]
 async fn sysinfo() -> impl IntoResponse {
     let mut data: Vec<String> = Vec::new();
     data.push(sysinfo::System::name().unwrap());
@@ -69,7 +77,8 @@ async fn main() {
         .route("/index.css", get(indexcss))
         .route("/index.js", get(indexjs))
         .route("/api/cpu_usage", get(cpuusage))
-        .route("/api/static_sysinfo", get(sysinfo));
+        .route("/api/static_sysinfo", get(sysinfo))
+        .route("/api/cores", get(cores));
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:8000").await.unwrap();
     serve(listener, app).await.unwrap();
